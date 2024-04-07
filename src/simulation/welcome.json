@@ -1,0 +1,65 @@
+{
+  "code": 200,
+  "data": {
+    "TodayMessage": [
+      {
+        "title": "今日订单收益",
+        "earnings": 220,
+        "comparison": 10
+      },
+      {
+        "title":"今日订单数量",
+        "earnings":220,
+        "comparison":10
+      },
+      {
+        "title":"今日访客数",
+        "earnings":220,
+        "comparison":10
+      },
+      {
+        "title":"支付转化率",
+        "earnings":220,
+        "comparison":10
+      }
+    ],
+    "CharData":[
+      {
+        "backgroundColor":"#fff",
+        "title": {
+          "text": "时段分布"
+        },
+        "tooltip": {},
+        "xAxis": {
+          "data": ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+        },
+        "yAxis": {},
+        "series": [
+          {
+            "name": "销量",
+            "type": "line",
+            "data": [5, 20, 36, 10, 10, 20]
+          }
+        ]
+      },
+      {
+        "backgroundColor":"#fff",
+        "title": {
+          "text": "实付金额"
+        },
+        "tooltip": {},
+        "xAxis": {
+          "data": ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+        },
+        "yAxis": {},
+        "series": [
+          {
+            "name": "销量",
+            "type": "bar",
+            "data": [5, 20, 36, 10, 10, 20]
+          }
+        ]
+      }
+    ]
+  }
+}
