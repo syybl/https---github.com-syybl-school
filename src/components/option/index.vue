@@ -52,6 +52,26 @@
         <el-menu-item index="/teacher">讲师</el-menu-item>
       </el-menu-item-group>
     </el-sub-menu>
+    <el-sub-menu index="info">
+      <template #title>
+        <el-icon><IconParkSolidTransactionOrder /></el-icon>
+        <span>咨讯管理</span>
+      </template>
+      <el-menu-item-group>
+        <el-menu-item index="/image">轮播图</el-menu-item>
+        <el-menu-item index="/article">文章</el-menu-item>
+      </el-menu-item-group>
+    </el-sub-menu>
+    <el-sub-menu index="activity">
+      <template #title>
+        <el-icon><IconParkSolidTransactionOrder /></el-icon>
+        <span>促销管理</span>
+      </template>
+      <el-menu-item-group>
+        <el-menu-item index="/activity">秒杀活动</el-menu-item>
+        <el-menu-item index="/coupon">优惠卷</el-menu-item>
+      </el-menu-item-group>
+    </el-sub-menu>
   </el-menu>
 </template>
 

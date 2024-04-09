@@ -1,167 +1,115 @@
 <template>
   <div class="course">
-    <div class="course-find">
-      <div class="one">
-        <div>
-          <span>上传时间</span>
-          <el-date-picker
-            v-model="time"
-            type="daterange"
-            range-separator="To"
-            start-placeholder="Start date"
-            end-placeholder="End date"
-          />
-        </div>
-        <div>
-          <span>课程名称</span>
-          <el-cascader :options="options" clearable />
-        </div>
-        <div>
-          <span>上传人</span>
-          <el-cascader :options="options" clearable />
-        </div>
-        
-      </div>
-      <div class="two">
-        <div>
-          <span>手动搜索</span>
-          <el-input placeholder="请输入内容" />
-        </div>
-        <div>
-          <el-button type="primary">搜索</el-button>
-          <el-button type="primary">重置</el-button>
-        </div>
-      </div>
-    </div>
+    <FindItem :data="find"></FindItem>
+    <TableList
+      :data="TableItem"
+      :title="TableTitle"
+      :tableData="tableData"
+      :tableClick="tableClick"
+    >
+    <template #image>
 
-    <div class="course-list">
-      <div class="title">
-        <span>课程列表</span>
-        <div class="add" @click="addCourse">
-          <el-icon><Tickets /></el-icon>
-          <span>添加课程</span>
+    </template>
+      <template #operate>
+        <div class="operate">
+          <div>
+            <span>编辑</span>
+            <span>|</span>
+            <span>下架</span>
+          </div>
+          <span>删除</span>
         </div>
-      </div>
-
-      <el-table
-        :data="tableData"
-        style="width: 100%"
-        :header-cell-style="{
-          backgroundColor: '#f5faf8',
-          color: '#666666',
-        }"
-      >
-        <el-table-column prop="check" align="center" width="70">
-          <template #header>
-            <el-checkbox size="large" />
-          </template>
-          <template #default="scope">
-            <el-checkbox size="large" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="id" label="编号" align="center" />
-        <el-table-column prop="name" label="名称" align="center" />
-        <el-table-column prop="image" label="封面" align="center" />
-        <el-table-column prop="status" label="状态" align="center" />
-        <el-table-column prop="price" label="价格" align="center" />
-        <el-table-column prop="sales" label="销量" align="center" />
-        <el-table-column prop="user" label="上传人" align="center" />
-        <el-table-column prop="time" label="上传时间" align="center" />
-        <el-table-column
-          prop="operation"
-          label="操作"
-          align="center"
-          width="150"
-        >
-          <template #default="scope">
-            <div class="operation">
-              <div>
-                <span>编辑</span>
-                <span>|</span>
-                <span>下架</span>
-              </div>
-              <span>删除</span>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="page">
-        <el-pagination background layout="prev, pager, next" :total="1000" />
-      </div>
-    </div>
+      </template>
+    </TableList>
   </div>
-  <router-view></router-view>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import type { Dayjs } from "dayjs";
+import FindItem from "@/components/find/find-item.vue";
+import TableList from "@/components/table/TableList.vue";
+import { find, TableItem, TableTitle } from "./meta";
+import Axios from "@/util/Axios";
+import type { courseMessage } from "@/type";
+import { ElMessage } from "element-plus";
+import sixteen from "@/util/sixteen";
+import formDate from "@/util/formDate";
+import { useUserStore } from "@/stores/useUserStore";
 type RangeValue = [Dayjs, Dayjs];
-const time = ref<RangeValue>();
-const router = useRouter()
-const options = [
-  {
-    value: "guide",
-    label: "Guide",
-  },
-];
-
-const tableData = [
-  {
-    date: "2016-05-03",
-    name: "Tom",
-    id: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-];
-
+const router = useRouter();
+const UserStore = useUserStore();
+// 跳转添加课程
 const addCourse = () => {
-    router.push("/course/add")
+  router.push("/course/add");
+};
+// 标题数据
+const title = ref({
+  ...TableTitle,
+});
+// 当前页
+const Page = ref(1);
+
+// 表格点击事件
+const tableClick = (
+  row: any,
+  col: any,
+  cell: HTMLTableCellElement,
+  event: Event
+) => {
+  const span = event.target as HTMLSpanElement;
+  if (span.innerHTML == "编辑") {
+    editCourse(row);
+  } else if (span.innerHTML == "下架") {
+    console.log("下架");
+  } else if (span.innerHTML == "删除") {
+    console.log("删除");
+  }
+};
+
+onMounted(() => {
+  title.value[1].fun = addCourse;
+  RequsetTablePageData(Page.value);
+});
+// 表格数据
+const tableData = ref<courseMessage[]>([]);
+// 请求表格数据
+const RequsetTablePageData = (Page: number) => {
+  Axios.get(`/course/${Page}`).then((res) => {
+    const data = res.data.data;
+
+    if (res.data.code === 200) {
+      data.data.forEach((item: courseMessage) => {
+        // item.id = sixteen(item.id as string);
+        // item.time = formDate(item.time);
+      });
+      // 表格数据
+      tableData.value = data.data;
+    } else {
+      ElMessage({
+        type: "error",
+        message: res.data,
+      });
+    }
+  });
+};
+
+const editCourse = (row: any) => {
+  console.log(row);
+  Axios.post(
+    `/order/${UserStore.Userinformation.id}/${UserStore.Userinformation.username}`,
+    {
+      ...row,
+    }
+  ).then((res) => {
+    if (res.data.code === 200) {
+      ElMessage({
+        type: "success",
+        message: res.data.data,
+      });
+    }
+  });
 };
 </script>
 
@@ -199,7 +147,6 @@ span {
 .el-input {
   width: 22.6vw;
 }
-
 
 .course-list {
   width: 100%;
@@ -249,5 +196,18 @@ span {
 }
 .add span {
   margin-left: 0.3vw;
+}
+.operate {
+  display: flex;
+}
+.operate > div {
+  color: #7ad8ac;
+  margin-right: 0.3vw;
+}
+.operate span {
+  margin-right: 0.2vw;
+}
+.operate > span {
+  color: #fb7371;
 }
 </style>

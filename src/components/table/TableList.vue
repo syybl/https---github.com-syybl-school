@@ -21,35 +21,50 @@
         <span>{{ title[1].title }}</span>
       </div>
     </div>
+    <!-- ------------------------------------------   -->
     <el-table
       :data="tableData"
       style="width: 100%"
+      @cell-click="tableClick"
       :header-cell-style="{
         backgroundColor: '#f5faf8',
         color: '#666666',
       }"
     >
-      <el-table-column prop="check" align="center" width="70">
-        <template #header>
-          <el-checkbox size="large" />
-        </template>
-        <template #default="scope">
-          <el-checkbox size="large" />
-        </template>
-      </el-table-column>
+      <el-table-column
+        type="selection"
+        prop="all"
+        label="全选"
+        align="center"
+        width="80"
+      />
 
       <el-table-column
         v-for="item in data"
         :prop="item.prop"
         :label="item.label"
         align="center"
-      ></el-table-column>
-      <el-table-column prop="operation" label="操作" align="center" width="150">
+        :width="item.width as any | 120"
+      >
         <template #default="scope">
-          <slot></slot>
+          <div
+            style="display: flex; align-items: center"
+            v-if="item.type == 'slot'"
+          >
+            <el-image :src="imagePath(scope)" />
+          </div>
         </template>
       </el-table-column>
+
+      <el-table-column prop="operation"
+        label="操作"
+        align="center"
+        width="150"
+        fixed="right">
+        <slot name="operate"></slot>
+      </el-table-column>
     </el-table>
+
     <div class="page">
       <el-pagination background layout="prev, pager, next" :total="1000" />
     </div>
@@ -59,7 +74,7 @@
 <script setup lang="ts">
 import type { Tabulation, TabulationTitle } from "@/type";
 import { ref } from "vue";
-defineProps({
+const { title, tableData } = defineProps({
   data: {
     type: Array as () => Tabulation[],
     default: [],
@@ -68,70 +83,28 @@ defineProps({
     type: Array as () => TabulationTitle[],
     default: [],
   },
+  tableData: {},
+  tableClick: {
+    type: Function,
+    default: () => {},
+  },
 });
 
-const tableData = [
-  {
-    date: "2016-05-03",
-    name: "Tom",
-    id: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-  {
-    date: "2016-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-  },
-];
+const imagePath = (scope:any) => {
+  var imagePath = `http://localhost:8080${scope.row.image}`;
+  console.log(scope);
+  return imagePath;
+};
 </script>
 
 <style scoped>
 span {
   margin-right: 0.5vw;
 }
-.table{
-    background-color: #fff;
-    padding: 2vw;
-    margin-top: 2vw;
+.table {
+  background-color: #fff;
+  padding: 2vw;
+  margin-top: 2vw;
 }
 
 .page {
@@ -145,7 +118,7 @@ span {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  padding-bottom:1.5vw;
+  padding-bottom: 1.5vw;
 }
 .add {
   display: flex;

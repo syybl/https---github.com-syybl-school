@@ -16,7 +16,7 @@
       }"
     >
       <div v-for="(value, index) in item" :key="index">
-        <span>{{ value.title }}</span>
+        <span v-if="value.type !== 'button'">{{ value.title }}</span>
         <el-date-picker
           v-if="value.type === 'time'"
           v-model="time"
@@ -28,20 +28,26 @@
             flex: 1,
           }"
         />
-      
-        <el-cascader :options="value.options"
-        :placeholder="value.placeholder"
+
+        <el-cascader
+          :options="value.options"
+          :placeholder="value.placeholder"
           v-else-if="value.type === 'select'"
           :style="{
             flex: 1,
           }"
         ></el-cascader>
-        <el-input v-else 
-        :style="{
+        <el-input
+          v-else-if="value.type === 'input'"
+          :style="{
             flex: 1,
-          }"></el-input>
+          }"
+        ></el-input>
+        <div v-else="value.type === 'button'" class="button_box">
+          <el-button @click="onclick(1)" color="#2bc17b">搜索</el-button>
+          <el-button @click="onclick(2)" color="#2bc17b">重置</el-button>
+        </div>
       </div>
-   
     </div>
   </div>
 </template>
@@ -52,7 +58,7 @@ import { useRouter } from "vue-router";
 import type { FindItme } from "@/type";
 const time = ref("");
 
-const { data } = defineProps({
+const { left, right} = defineProps({
   height: {
     type: String,
     default: "10vw",
@@ -77,7 +83,19 @@ const { data } = defineProps({
     type: Array as () => FindItme[][],
     default: () => [],
   },
+  left: {
+    type: Function,
+    default: () => {},
+  },
+  right: {
+    type: Function,
+    default: () => {},
+  },
 });
+
+const onclick = (index: number) => {
+  index == 1 ? left() : right();
+};
 </script>
 
 <style scoped>
@@ -105,4 +123,9 @@ const { data } = defineProps({
   margin-right: 0.5vw;
   width: 18% !important;
 }
+.button_box .el-button{
+  width: 4.5vw;
+  color: #fff;
+}
+
 </style>

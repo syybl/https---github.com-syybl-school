@@ -9,7 +9,7 @@ export const useUserStore = defineStore(
   () => {
     const Userinformation: Ref<User> = ref<User>({
       id: "10",
-      username: "xiaohong",
+      username: "admin",
       password: "123456",
       state: false,
       
@@ -18,7 +18,7 @@ export const useUserStore = defineStore(
     const EmptyUser = () => {
       Userinformation.value = {
         id: "10",
-        username: "xiaohong",
+        username: "admin",
         password: "123456",
         state: false,
       };

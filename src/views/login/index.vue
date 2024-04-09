@@ -70,10 +70,9 @@ const form = reactive<User>(userStore.Userinformation);
 
 const onEnter = async () => {
   console.log("登录")
-  Axios(`/user/${form.username}/${form.password}`).then((res: any) => {
+  Axios(`/users/${form.username}/${form.password}`).then((res: any) => {
     const user = res.data;
     if (user.code == 200) {
-  
       userStore.Userinformation = user.data;
       userStore.Userinformation.state = true
       routerStore.skipRouter("/welcome")

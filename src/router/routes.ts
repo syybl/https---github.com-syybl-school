@@ -32,6 +32,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import("@/views/course/components/addcourse.vue"),
   },
   {
+    path: "/course/edit",
+    name: "editcourse",
+    component: () => import("@/views/course/components/editcourse.vue"),
+  },
+  {
     path: "/order",
     name: "order",
     component: () => import("@/views/order/index.vue"),
@@ -44,6 +49,39 @@ const routes: RouteRecordRaw[] = [
     name: "ordermessage",
     component: () => import("@/views/order/components/OrderMessage.vue"),
   },
-];
-
+  {
+    path:"/refund",
+    name:"refund",
+    component:()=>import("@/views/refund/index.vue")
+  },
+  {
+    path: "/student",
+    name: "student",
+    component: () => import("@/views/student/index.vue"),
+  },
+  {
+    path:"/teacher",
+    name:"teacher",
+    component:()=>import("@/views/teacher/index.vue")
+  },
+  {
+    path:"/image",
+    name:"image",
+    component:()=>import("@/views/image/index.vue")
+  },{
+    path:"/article",
+    name:"article",
+    component:()=>import("@/views/article/index.vue")
+  },
+  {
+    path:"/activity",
+    name:"activity",
+    component:()=>import("@/views/activity/index.vue")
+  },
+  {
+    path:"/coupon",
+    name:"coupon",
+    component:()=>import("@/views/coupon/index.vue")
+  }
+]
 export default routes;
